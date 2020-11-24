@@ -1,4 +1,5 @@
 // sample.cpp
+
 #include <iostream>
 using namespace std;
 #define CPP2_PRIME_UPPER_LIMIT 1000000 //’Tõ‚·‚é’l‚ÌãŒÀ’lB
