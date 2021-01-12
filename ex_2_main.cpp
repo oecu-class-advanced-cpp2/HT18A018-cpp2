@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include <sstream>
+
 
 namespace cpp2 {
 	/* --------------------------------------------------------------------- */
@@ -10,76 +13,92 @@ namespace cpp2 {
 	*/
 	/* --------------------------------------------------------------------- */
 	class mcxi {
+	private:
+		int value_;
+		int unit(char c) {    //単位に対応する値を取得します。
+			int i = 0;
+			if (c == 'm') {i = 1000;}
+			else if(c=='c'){i = 100;}
+			else if (c == 'x') {i = 10;}
+			else if (c == 'i') {i = 1;}
+			return i;
+		}
+
 	public:
-		/* ----------------------------------------------------------------- */
-		/*
-		mcxi
-
-		指定された文字列を解析して、オブジェクトを初期化します。
-		以下の場合には例外が創出されます。
-
-		1. [2-9,m,c,x,i] 以外の文字が出現した場合
-		2. 2 文字続けて数字 (2-9) が出現した場合
-		3. m, c, x, i がこの順序で出現しなかった場合
-		ただし、例えば mx のように、特定の文字をスキップする事は許容
-		されます。
-		*/
-		/* ----------------------------------------------------------------- */
 		mcxi(const std::string& s) : value_(0) {
 			int digit = 0;
+			int w = 0;
 			for (auto pos = s.begin(); pos != s.end(); ++pos) {
 				if (*pos >= '2' && *pos <= '9') {
-					digit = *pos - '0';
+					if (w == 0) {
+						digit = *pos - '0';
+						w = 1;
+					}else{
+						std::cout << "数字連続エラー" << std::endl;
+					}
 				}
 				else {
 					auto u = unit(*pos);
 					value_ += std::max(digit, 1) * u;
 					digit = 0;
+					w = 0;
 				}
 			}
+			if (w == 1) {
+				value_ += digit;
+			}
 		}
+
+		mcxi operator+(const mcxi& rhs) {//2 つのオブジェクトの加算結果を取得します。
+			auto res = this->value_ + rhs.value_;
+			cpp2::mcxi x("");
+			x.value_ = res;
+
+			return x;
+		}
+
+	std::string to_string() const {//現在の値を mcxi 記法に変換します。
+		std::stringstream ss;
+
+		int q = value_ / 1000;
+		int p = value_ % 1000;
+		if (q == 1) {
+			ss << 'm';
+		}
+		if (q > 1) {
+			ss << q;
+			ss << 'm';
+		}
+		q = p / 100;
+		p = p % 100;
+		if (q == 1) {
+			ss << 'c';
+		}
+		if (q > 1) {
+			ss << q;
+			ss << 'c';
+		}
+		q = p / 10;
+		p = p % 10;
+		if (q == 1) {
+			ss << 'x';
+		}
+		if (q > 1) {
+			ss << q;
+			ss << 'x';
+		}
+		q = p / 1;
+		p = p % 1;
+		if (q == 1) {
+			ss << 'i';
+		}
+		if (q > 1) {
+			ss << q;
+		}
+
+		return ss.str();
 	}
-
-
-	/* ----------------------------------------------------------------- */
-	/*
-	operator+
-
-	2 つのオブジェクトの加算結果を取得します。
-	*/
-	/* ----------------------------------------------------------------- */
-	mcxi operator+(const mcxi& rhs) {
-
-	}
-
-	/* ----------------------------------------------------------------- */
-	/*
-	to_string
-
-	現在の値を mcxi 記法に変換します。
-	*/
-	/* ----------------------------------------------------------------- */
-	std::string to_string() const {
-
-	}
-
-private:
-
-	/* ----------------------------------------------------------------- */
-	/*
-	unit
-
-	単位に対応する値を取得します。
-	*/
-	/* ----------------------------------------------------------------- */
-	int unit(char c) {
-
-	}
-
-
-private:
-	int value_;
-};
+	};
 }
 
 int main() {
@@ -132,4 +151,6 @@ int main() {
 	cpp2::mcxi b9("c2x8i");
 	auto result9 = a9 + b9;
 	std::cout << "9m9c9x9i" << " " << result9.to_string() << std::endl;
+
+	std::cin.get();
 }
