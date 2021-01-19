@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <sstream>
 
-
 namespace cpp2 {
 	/* --------------------------------------------------------------------- */
 	/*
