@@ -1,7 +1,10 @@
+//ex_2_main.cpp
 #include <iostream>
 #include <string>
 #include <algorithm>
 #include <sstream>
+
+int Error = 0;
 
 namespace cpp2 {
 	/* --------------------------------------------------------------------- */
@@ -33,10 +36,9 @@ namespace cpp2 {
 						digit = *pos - '0';
 						w = 1;
 					}else{
-						std::cout << "数字連続エラー" << std::endl;
+						Error = 1;
 					}
-				}
-				else {
+				}else {
 					auto u = unit(*pos);
 					value_ += std::max(digit, 1) * u;
 					digit = 0;
@@ -44,7 +46,7 @@ namespace cpp2 {
 				}
 			}
 			if (w == 1) {
-				value_ += digit;
+				Error = 2;
 			}
 		}
 
@@ -56,7 +58,7 @@ namespace cpp2 {
 			return x;
 		}
 
-	std::string to_string() const {//現在の値を mcxi 記法に変換します。
+	std::string to_string(std::string a) const {//現在の値を mcxi 記法に変換します。
 		std::stringstream ss;
 
 		int q = value_ / 1000;
@@ -93,63 +95,104 @@ namespace cpp2 {
 		}
 		if (q > 1) {
 			ss << q;
+			ss << 'i';
 		}
-
+		
+		if (Error==1) {a = "数字が連続で入力されました";}
+		else if (Error==2) {a = "入力最後が数字になっています";}
+		if (0 < Error) {
+			Error = 0;
+			return a;
+		}
+		if (a != ss.str()) {
+			std::cout<<"不";
+		}
+		std::cout<<"正解　";
 		return ss.str();
 	}
 	};
 }
 
 int main() {
+	std::string a;
+
+	a = "3x";
 	cpp2::mcxi a0("xi");
 	cpp2::mcxi b0("x9i");
 	auto result0 = a0 + b0;
-	std::cout << "3x" << " " << result0.to_string() << std::endl;
+	std::cout << a << " " << result0.to_string(a) << std::endl;
 
+	a = "x";
 	cpp2::mcxi a1("i");
 	cpp2::mcxi b1("9i");
 	auto result1 = a1 + b1;
-	std::cout << "x" << " " << result1.to_string() << std::endl;
+	std::cout << a << " " << result1.to_string(a) << std::endl;
 
+	a = "6cx";
 	cpp2::mcxi a2("c2x2i");
 	cpp2::mcxi b2("4c8x8i");
 	auto result2 = a2 + b2;
-	std::cout << "6cx" << " " << result2.to_string() << std::endl;
+	std::cout << a << " " << result2.to_string(a) << std::endl;
 
+	a = "5m9c9x9i";
 	cpp2::mcxi a3("m2ci");
 	cpp2::mcxi b3("4m7c9x8i");
 	auto result3 = a3 + b3;
-	std::cout << "5m9c9x9i" << " " << result3.to_string() << std::endl;
+	std::cout << a << " " << result3.to_string(a) << std::endl;
 
+	a = "m";
 	cpp2::mcxi a4("9c9x9i");
 	cpp2::mcxi b4("i");
 	auto result4 = a4 + b4;
-	std::cout << "m" << " " << result4.to_string() << std::endl;
+	std::cout << a << " " << result4.to_string(a) << std::endl;
 
+	a = "9m9c9x9i";
 	cpp2::mcxi a5("i");
 	cpp2::mcxi b5("9m9c9x8i");
 	auto result5 = a5 + b5;
-	std::cout << "9m9c9x9i" << " " << result5.to_string() << std::endl;
+	std::cout << a << " " << result5.to_string(a) << std::endl;
 
+	a = "mi";
 	cpp2::mcxi a6("m");
 	cpp2::mcxi b6("i");
 	auto result6 = a6 + b6;
-	std::cout << "mi" << " " << result6.to_string() << std::endl;
+	std::cout << a << " " << result6.to_string(a) << std::endl;
 
+	a = "mi";
 	cpp2::mcxi a7("i");
 	cpp2::mcxi b7("m");
 	auto result7 = a7 + b7;
-	std::cout << "mi" << " " << result7.to_string() << std::endl;
+	std::cout << a << " " << result7.to_string(a) << std::endl;
 
+	a = "mx";
 	cpp2::mcxi a8("m9i");
 	cpp2::mcxi b8("i");
 	auto result8 = a8 + b8;
-	std::cout << "mx" << " " << result8.to_string() << std::endl;
+	std::cout << a << " " << result8.to_string(a) << std::endl;
 
+	a = "9m9c9x9i";
 	cpp2::mcxi a9("9m8c7xi");
 	cpp2::mcxi b9("c2x8i");
 	auto result9 = a9 + b9;
-	std::cout << "9m9c9x9i" << " " << result9.to_string() << std::endl;
+	std::cout << a << " " << result9.to_string(a) << std::endl;
+
+	a = "m2c3x4i";
+	cpp2::mcxi a10("9m8c7xi");
+	cpp2::mcxi b10("c2x88i");
+	auto result10 = a10 + b10;
+	std::cout << a << " " << result10.to_string(a) << std::endl;
+
+	a = "m2c3x4i";
+	cpp2::mcxi a11("6c2x2i");
+	cpp2::mcxi b11("6cx2");
+	auto result11 = a11 + b11;
+	std::cout << a << " " << result11.to_string(a) << std::endl;
+
+	a = "m2c3xi";
+	cpp2::mcxi a12("6c2x2i");
+	cpp2::mcxi b12("6cx2i");
+	auto result12 = a12 + b12;
+	std::cout << a << " " << result12.to_string(a) << std::endl;
 
 	std::cin.get();
 }
